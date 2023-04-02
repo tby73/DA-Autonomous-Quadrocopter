@@ -47,11 +47,7 @@ def ReadMPU(addr_high, addr_low):
     # get full data
     return (high_byte << 8) | low_byte
 
-def SetServo(gyro_dps):
-    # init PWM
-    servo_pwm = GPIO.PWM(SERVO_PIN, 50)
-    servo_pwm.start(0)
-
+def SetServo(gyro_dps, servo_pwm):
     # calculate angle from gyro dps
     servo_angle = (gyro_dps + 250) / 5.0
 
@@ -71,6 +67,10 @@ def main():
     InitSystem()
     InitMPU()
 
+    # init Servo PWM
+    servo_pwm = GPIO.PWM(SERVO_PIN, 50)
+    servo_pwm.start(0)
+
     while True:
         # read raw data from MPU (Gyroscope data)
         gyro_xout = ReadMPU(GYRO_XOUT_H, GYRO_XOUT_L)
@@ -83,7 +83,7 @@ def main():
         gyro_dps_z = gyro_zout * 131.0 / 32768.0
 
         # control servo from gyro dps
-        SetServo(gyro_dps_x)
+        SetServo(gyro_dps_x, servo_pwm)
 
         # Display [X Y Z]-DPS on SSD1306
         DisplayOLED(gyro_dps_x, gyro_dps_y, gyro_dps_z)
@@ -93,4 +93,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
