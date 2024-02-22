@@ -34,6 +34,6 @@ class ObjectDetector:
                 cv2.rectangle(self.image, (x, y), (x1, y1), color=tuple(color.tolist()), thickness=2)
                 cv2.putText(self.image, label, (x, y - 10), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, color=tuple(color.tolist()), lineType=cv2.LINE_AA)
 
-        return self.image
+        return cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
     
 
