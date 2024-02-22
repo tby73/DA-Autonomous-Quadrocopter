@@ -19,7 +19,7 @@ def main():
         detector = ObjectDetector(input_frame, YOLOV8_OBJ_D_MODEL_PATH)
         output = detector.Detect()
 
-        cv2.imshow("AutoQuad FS-CV - Object Detection", cv2.cvtColor(output, cv2.COLOR_BGR2RGB))
+        cv2.imshow("AutoQuad FS-CV - Object Detection", output)
 
         if cv2.waitKey(20) & 0xff == ord("q"):
             break
