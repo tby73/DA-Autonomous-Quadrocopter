@@ -10,7 +10,7 @@ class ObjectDetector:
         self.model = YOLO(model_path)
 
     def GenerateCategoryColors(self):
-        # generate a random RGB-Tuple with values in range 0-255
+        # generate a radnom RGB-Tuple with values in range 0-255
         return np.random.randint(0, 255, size=(len(LABELS) - 1, 3), dtype=np.uint8)
     
     def Detect(self):

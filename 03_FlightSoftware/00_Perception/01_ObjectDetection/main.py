@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+from l515 import L515
 from objectdetector import ObjectDetector
 
 # camera variables
@@ -11,7 +12,7 @@ VIDEO_SOURCE_1 = ""
 # YOLOv8 model path
 YOLOV8_OBJ_D_MODEL_PATH = "yolo-weights/yolov8n.pt"
 
-def main():
+def WebCamInterference():
     video_cap = cv2.VideoCapture(MICROSOFT_HWB1_CAM)
 
     while True:
@@ -26,6 +27,22 @@ def main():
 
     video_cap.release()
     cv2.destroyAllWindows()
+
+def L515Interference():
+    lidar_cam = L515(640, 480)
+
+    while True:
+        color_frame = cv2.cvtColor(lidar_cam.GetRGB8(), cv2.COLOR_RGB2BGR)
+        detector = ObjectDetector(color_frame, YOLOV8_OBJ_D_MODEL_PATH)
+        output = detector.Detect()
+
+        cv2.imshow("AutoQuad FS-CV - Object Detection", output)
+
+        if cv2.waitKey(20) & 0xff == ord("q"):
+            break
+
+def main():
+    L515Interference()
 
 if __name__ == "__main__":
     main()
