@@ -3,7 +3,8 @@ import dronekit as dk
 
 from dronekit import VehicleMode
 
-TCP_FC_TARGET = "tcp:127.0.0.1:5760"
+SERIAL_FC_PORT = "dev/ttyTHS1"
+SERIAL_BAUDRATE = 115200
 
 def PrintOptions():
     print("*** AutoQuad VTOL TEST ***")
@@ -14,8 +15,8 @@ def PrintOptions():
     print("     <alt> ALTITUDE")
     print("[l] LAND")
 
-def VTOL(tcp_addr, altitude):
-    vehicle = dk.connect(tcp_addr, wait_ready=True)
+def VTOL(serial_port, altitude):
+    vehicle = dk.connect(serial_port, wait_ready=True, baud=SERIAL_BAUDRATE)
     vehicle.mode = VehicleMode("GUIDED")
     vehicle.armed = True
 
@@ -44,7 +45,7 @@ def main():
 
     if command == "v" or command == "V":
         altitude = int(input("  ALT[m]: "))
-        VTOL(TCP_FC_TARGET, altitude=altitude)
+        VTOL(SERIAL_FC_PORT, altitude=altitude)
 
 
 if __name__ == "__main__":
