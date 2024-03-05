@@ -57,9 +57,9 @@ class L515:
         depth_map = cv2.applyColorMap(cv2.convertScaleAbs(depth_map, alpha=0.03), cv2.COLORMAP_JET)
         depth_map = cv2.resize(depth_map, (self.output_width, self.output_height), interpolation=cv2.INTER_NEAREST)
 
-        mp_distance_mm = depth_frame.get_distance(int(self.DIST_MEAS_POINT[0]), int(self.DIST_MEAS_POINT[1]))
+        dmp_distance = depth_frame.get_distance(int(self.DIST_MEAS_POINT[0]), int(self.DIST_MEAS_POINT[1]))
 
-        return depth_map, mp_distance_mm
+        return depth_map, dmp_distance
 
     def GetInfrared8(self):
         frames = self.pipeline.wait_for_frames()

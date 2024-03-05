@@ -17,6 +17,9 @@ class L515:
         self.output_width = output_width
         self.output_height = output_height
 
+        # point of distance measurement
+        self.DIST_MEAS_POINT = (self.L515_LIDAR_IR_CONFIG_WIDTH / 2, self.L515_LIDAR_IR_CONFIG_HEIGHT / 2)
+
         # L515-config settings
         self.pipeline = rs.pipeline()
         self.config = rs.config()
@@ -26,8 +29,16 @@ class L515:
         self.config.enable_stream(rs.stream.depth, self.L515_LIDAR_IR_CONFIG_WIDTH, self.L515_LIDAR_IR_CONFIG_HEIGHT, rs.format.z16, 30)
         self.config.enable_stream(rs.stream.infrared, self.L515_LIDAR_IR_CONFIG_WIDTH, self.L515_LIDAR_IR_CONFIG_HEIGHT, rs.format.y8, 30)
 
+        # enable IMU
+        self.config.enable_stream(rs.stream.gyro)
+        self.config.enable_stream(rs.stream.accel)
+
+        # init Pointcloud
+        self.pointcloud = rs.pointcloud()
+
         # apply settings
         self.pipeline.start(self.config)
+        self.colorizer = rs.colorizer()
 
     def GetRGB8(self):
         frames = self.pipeline.wait_for_frames()
@@ -46,7 +57,9 @@ class L515:
         depth_map = cv2.applyColorMap(cv2.convertScaleAbs(depth_map, alpha=0.03), cv2.COLORMAP_JET)
         depth_map = cv2.resize(depth_map, (self.output_width, self.output_height), interpolation=cv2.INTER_NEAREST)
 
-        return depth_map
+        mp_distance_mm = depth_frame.get_distance(int(self.DIST_MEAS_POINT[0]), int(self.DIST_MEAS_POINT[1]))
+
+        return depth_map, mp_distance_mm
 
     def GetInfrared8(self):
         frames = self.pipeline.wait_for_frames()
@@ -57,3 +70,21 @@ class L515:
         
         return ir_image
     
+    def GetIMU(self):
+        # get frames
+        frames = self.pipeline.wait_for_frames()
+        gyro_frame = frames.first_or_default(rs.stream.gyro)
+        accel_frame = frames.first_or_default(rs.stream.accel)
+
+        # processing into vectors
+        if accel_frame and gyro_frame:
+            gyro_data = gyro_frame.as_motion_frame().get_motion_data()
+            accel_data = accel_frame.as_motion_frame().get_motion_data()
+
+            gyro_3d = np.array([gyro_data.x, gyro_data.y, gyro_data.z])
+            accel_3d = np.array([accel_data.x, accel_data.y, accel_data.z])
+
+            return gyro_3d, accel_3d
+        
+
+
