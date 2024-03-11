@@ -3,6 +3,7 @@ import numpy as np
 
 from ultralytics import YOLO
 from labels import LABELS
+from visualization_utils import Display
 
 MODEL_PATH = "yolo-Weights/yolov8n.pt"
 yolo_model = YOLO(MODEL_PATH)
@@ -35,12 +36,12 @@ def Detect(frame):
             class_id = int(box.cls[0])
             color = category_colors[class_id]
 
-            # visualize
-            cv2.rectangle(frame, (x, y), (x1, y1), color=tuple(color.tolist()), thickness=2)
+            # get width and height from coords
+            w, h = (x1 - x), (y1 - y)
 
             # labeling
             label = LABELS[class_id]
-            cv2.putText(frame, label, (x - 10, y), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=tuple(color.tolist()), fontScale=0.65, thickness=1)
+            Display.BoundingBoxwithInfo(frame, f"{label}", 0.65, x, y, w, h, tuple(color.tolist()), 2)
 
     landing_label = (90, 420)
 
