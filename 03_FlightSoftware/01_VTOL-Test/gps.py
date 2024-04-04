@@ -7,7 +7,7 @@ class GPS:
         self.bus = smbus.SMBus(bus_number)
         self.device_address = device_address
 
-    def read_nmea_sentence(self):
+    def ReadNMEAfromGPS(self):
         sentence = ""
         try:
             # Read one byte at a time until newline character is encountered
@@ -20,7 +20,7 @@ class GPS:
             print(f"Error reading I2C data: {e}")
         return sentence.strip()
 
-    def parse_nmea_sentence(self, sentence):
+    def ParseNMEAMessage(self, sentence):
         try:
             msg = pynmea2.parse(sentence)
             if isinstance(msg, pynmea2.types.talker.GGA):
@@ -32,7 +32,7 @@ class GPS:
             print(f"Parse error: {e}")
         return None, None, None
 
-    def get_gps_data(self):
+    def GetGPS(self):
         sentence = self.read_nmea_sentence()
         latitude, longitude, altitude = self.parse_nmea_sentence(sentence)
         return latitude, longitude, altitude
