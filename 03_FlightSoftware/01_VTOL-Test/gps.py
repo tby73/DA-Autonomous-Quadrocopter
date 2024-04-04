@@ -33,8 +33,8 @@ class GPS:
         return None, None, None
 
     def GetGPS(self):
-        sentence = self.read_nmea_sentence()
-        latitude, longitude, altitude = self.parse_nmea_sentence(sentence)
+        sentence = self.ReadNMEAfromGPS()
+        latitude, longitude, altitude = self.ParseNMEAMessage(sentence)
         return latitude, longitude, altitude
 
 def main():
@@ -42,7 +42,7 @@ def main():
 
     try:
         while True:
-            latitude, longitude, altitude = gps.get_gps_data()
+            latitude, longitude, altitude = gps.GetGPS()
             if latitude is not None and longitude is not None and altitude is not None:
                 print(f"Latitude: {latitude}, Longitude: {longitude}, Altitude: {altitude} meters")
             time.sleep(1)  # Adjust the delay as needed
